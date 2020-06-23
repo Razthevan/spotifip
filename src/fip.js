@@ -1,3 +1,6 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 const fetch = require("node-fetch");
 const { print } = require("graphql");
 const { ApolloServer } = require("apollo-server");
@@ -18,7 +21,6 @@ const executor = ({ document, variables }) => {
     },
     body: JSON.stringify({ query, variables }),
   }).then((response) => response.json());
-
   return fetchResult;
 };
 
