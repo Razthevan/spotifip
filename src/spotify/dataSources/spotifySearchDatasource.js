@@ -1,4 +1,5 @@
 const { RESTDataSource } = require("apollo-datasource-rest");
+const queryString = require("query-string");
 
 const API_BASE_URL = "https://api.spotify.com/v1";
 
@@ -31,12 +32,20 @@ class SpotifySearchAPI extends RESTDataSource {
 
   async getSongMetadata(title, albumTitle, mainArtists) {
     try {
-      const result = await this.get("/search", {
-        q: title,
+      const queryParams = {
+        q: `track:${title} ${
+          mainArtists.length ? `artist:${mainArtists[0]}` : ""
+        }`,
         type: "track",
         limit: 3,
-        include_external: true,
+      };
+
+      const encodedQueryParams = queryString.stringify(queryParams, {
+        sort: false,
+        strict: true,
       });
+
+      const result = await this.get("/search", encodedQueryParams);
       const {
         tracks: { items, total },
       } = result;
@@ -44,6 +53,7 @@ class SpotifySearchAPI extends RESTDataSource {
       if (!total) {
         return null;
       }
+
       const trackInfo = items[0];
       const { album, artists, external_urls, name } = trackInfo;
       const albumInfo = {
@@ -59,7 +69,7 @@ class SpotifySearchAPI extends RESTDataSource {
       });
       const spotifyUrl = external_urls.spotify;
       const metadata = { albumInfo, artistsInfo, spotifyUrl, name };
-      console.log("metadata: ", metadata);
+
       return metadata;
     } catch (error) {
       if (error.extensions && error.extensions.code === UNAUTHENTICATED_ERROR) {
