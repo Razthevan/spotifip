@@ -84,4 +84,6 @@ const server = new ApolloServer({
   },
 });
 
-server.listen({ port: process.env.PORT || 4000 || port }).then(({ url }) => {});
+server.listen({ port: process.env.PORT || port }).then(({ url }) => {
+  console.log(`SpotiFip service ready at ${url}`);
+});

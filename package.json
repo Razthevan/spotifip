@@ -24,7 +24,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start:watch": "nodemon --signal SIGINT -e ts,js -x yarn start",
+    "dev": "nodemon --signal SIGINT -e ts,js -x yarn start",
     "start": "concurrently 'yarn start:gateway' 'yarn start:fip' 'yarn start:spotify'",
     "start:gateway": "wait-on tcp:4001 && wait-on tcp:4002 && nodemon src/index",
     "start:fip": "nodemon src/fip",

@@ -32,7 +32,7 @@ const startServer = async (port) => {
   });
   const federationSchema = transformSchemaFederation(fipSchema, {
     Track: {
-      keyFields: ["title"],
+      keyFields: ["title", "albumTitle", "mainArtists"],
     },
   });
   const server = new ApolloServer({
