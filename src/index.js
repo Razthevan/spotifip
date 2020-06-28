@@ -77,7 +77,7 @@ const server = new ApolloServer({
   ],
   cors: {
     credentials: true,
-    origin: "https://razthevan.now.sh/",
+    origin: "https://razthevan.now.sh",
   },
 });
 
