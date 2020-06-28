@@ -1,17 +1,26 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
+const cookie = require("cookie");
 const { ApolloServer } = require("apollo-server");
 const { ApolloGateway, RemoteGraphQLDataSource } = require("@apollo/gateway");
-const cookie = require("cookie");
 
 const port = 4000;
 const SPOTIFY_ACCESS_TOKEN = "spotify_access_token";
 
 class DataSourceWithHeadersHandling extends RemoteGraphQLDataSource {
   willSendRequest({ request, context }) {
-    if (context.headers && context.headers[SPOTIFY_ACCESS_TOKEN]) {
-      request.http.headers.set(
-        SPOTIFY_ACCESS_TOKEN,
-        context.headers[SPOTIFY_ACCESS_TOKEN]
-      );
+    if (context.headers) {
+      const parsedSpotifyCookie = context.headers.cookie
+        ? cookie.parse(context.headers.cookie)
+        : null;
+      if (parsedSpotifyCookie) {
+        request.http.headers.set(
+          SPOTIFY_ACCESS_TOKEN,
+          parsedSpotifyCookie[SPOTIFY_ACCESS_TOKEN]
+        );
+      }
     }
   }
   didReceiveResponse({ response, _, context }) {
@@ -60,11 +69,6 @@ const server = new ApolloServer({
               response.http.headers.set("Set-Cookie", spotifyCookie, {
                 maxAge: 3600,
               });
-
-              response.http.headers.set(
-                SPOTIFY_ACCESS_TOKEN,
-                context.spotify_access_token
-              );
             }
           },
         };
@@ -73,8 +77,13 @@ const server = new ApolloServer({
   ],
   cors: {
     credentials: true,
-    origin: "http://localhost:3000",
+    origin:
+      process.env.NODE_ENV !== "production"
+        ? "http://localhost:3000"
+        : "https://razthevan.now.sh/",
   },
 });
 
-server.listen({ port: process.env.PORT || 4000 || port }).then(({ url }) => {});
+server.listen({ port: process.env.PORT || port }).then(({ url }) => {
+  console.log(`SpotiFip service ready at ${url}`);
+});

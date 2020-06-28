@@ -29,18 +29,43 @@ class SpotifySearchAPI extends RESTDataSource {
     }
   }
 
-  async getSongMetadata(title) {
+  async getSongMetadata(title, albumTitle, mainArtists) {
     try {
-      const metaData = await this.get("/search", {
+      const result = await this.get("/search", {
         q: title,
         type: "track",
+        limit: 3,
+        include_external: true,
       });
-      return title;
-    } catch (error) {
-      if (error.extensions.code === UNAUTHENTICATED_ERROR) {
+      const {
+        tracks: { items, total },
+      } = result;
+
+      if (!total) {
         return null;
       }
-      return error;
+      const trackInfo = items[0];
+      const { album, artists, external_urls, name } = trackInfo;
+      const albumInfo = {
+        albumName: album.name,
+        albumImages: album.images,
+        albumReleaseDate: album.release_date,
+        albumLink: album.external_urls.spotify,
+      };
+      const artistsInfo = artists.map((artist) => {
+        return {
+          name: artist.name,
+        };
+      });
+      const spotifyUrl = external_urls.spotify;
+      const metadata = { albumInfo, artistsInfo, spotifyUrl, name };
+      console.log("metadata: ", metadata);
+      return metadata;
+    } catch (error) {
+      if (error.extensions && error.extensions.code === UNAUTHENTICATED_ERROR) {
+        return null;
+      }
+      return null;
     }
   }
 }

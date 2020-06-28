@@ -14,6 +14,7 @@
     "apollo-server": "^2.12.0",
     "concurrently": "^5.1.0",
     "cookie": "^0.4.1",
+    "dotenv": "^8.2.0",
     "graphql": "^15.0.0",
     "graphql-tools": "^6.0.10",
     "graphql-transform-federation": "^2.1.0",
@@ -23,7 +24,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start:watch": "nodemon --signal SIGINT -e ts,js -x yarn start",
+    "dev": "nodemon --signal SIGINT -e ts,js -x yarn start",
     "start": "concurrently 'yarn start:gateway' 'yarn start:fip' 'yarn start:spotify'",
     "start:gateway": "wait-on tcp:4001 && wait-on tcp:4002 && nodemon src/index",
     "start:fip": "nodemon src/fip",

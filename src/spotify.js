@@ -10,14 +10,37 @@ const SPOTIFY_ACCESS_TOKEN = "spotify_access_token";
 const typeDefs = gql`
   extend type Track @key(fields: "title") {
     title: String! @external
-    metaData: String @requires(fields: "title")
+    albumTitle: String @external
+    mainArtists: [String] @external
+    metadata: Metadata @requires(fields: "title albumTitle mainArtists")
+  }
+  type Metadata {
+    name: String!
+    spotifyUrl: String!
+    artistsInfo: [ArtistInfo]
+    albumInfo: AlbumInfo
+  }
+  type ArtistInfo {
+    name: String
+  }
+  type AlbumInfo {
+    albumName: String
+    albumReleaseDate: String
+    albumImages: [AlbumImage]
+    albumLink: String
+  }
+  type AlbumImage {
+    url: String
+    width: String
+    height: String
   }
 `;
 
 const resolvers = {
   Track: {
-    metaData: async (track, _, { dataSources: { spotifySearchAPI } }) => {
-      return spotifySearchAPI.getSongMetadata(track.title);
+    metadata: async (track, _, { dataSources: { spotifySearchAPI } }) => {
+      const { title, albumTitle, mainArtists } = track;
+      return spotifySearchAPI.getSongMetadata(title, albumTitle, mainArtists);
     },
   },
 };

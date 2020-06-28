@@ -1,3 +1,6 @@
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 const { RESTDataSource } = require("apollo-datasource-rest");
 
 const LOGIN_BASE_URL = "https://accounts.spotify.com";
