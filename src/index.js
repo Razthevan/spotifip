@@ -63,12 +63,10 @@ const server = new ApolloServer({
               const spotifyCookie = cookie.serialize(
                 SPOTIFY_ACCESS_TOKEN,
                 context[SPOTIFY_ACCESS_TOKEN],
-                {}
+                { maxAge: 3600 }
               );
 
-              response.http.headers.set("Set-Cookie", spotifyCookie, {
-                maxAge: 3600,
-              });
+              response.http.headers.set("Set-Cookie", spotifyCookie);
             }
           },
         };
