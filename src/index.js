@@ -77,10 +77,7 @@ const server = new ApolloServer({
   ],
   cors: {
     credentials: true,
-    origin:
-      process.env.NODE_ENV !== "production"
-        ? "http://localhost:3000"
-        : "https://razthevan.now.sh/",
+    origin: "https://razthevan.now.sh/",
   },
 });
 
