@@ -63,7 +63,7 @@ const server = new ApolloServer({
               const spotifyCookie = cookie.serialize(
                 SPOTIFY_ACCESS_TOKEN,
                 context[SPOTIFY_ACCESS_TOKEN],
-                { maxAge: 3500 }
+                { maxAge: 3600 }
               );
 
               response.http.headers.set("Set-Cookie", spotifyCookie);
@@ -75,7 +75,15 @@ const server = new ApolloServer({
   ],
   cors: {
     credentials: true,
-    origin: "https://eclectic.now.sh",
+    origin: (origin, callback) => {
+      const whitelist = ["http://localhost:3000", "https://eclectic.now.sh"];
+
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
   },
 });
 
