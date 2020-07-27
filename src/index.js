@@ -76,7 +76,11 @@ const server = new ApolloServer({
   cors: {
     credentials: true,
     origin: (origin, callback) => {
-      const whitelist = ["http://localhost:3000", "https://eclectic.now.sh"];
+      const whitelist = [
+        "http://localhost:3000",
+        "http://localhost:4000",
+        "https://eclectic.now.sh",
+      ];
 
       if (whitelist.indexOf(origin) !== -1) {
         callback(null, true);

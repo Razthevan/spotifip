@@ -31,6 +31,9 @@ class SpotifySearchAPI extends RESTDataSource {
   }
 
   async getSongMetadata(title, albumTitle, mainArtists) {
+    const {
+      dataSources: { youTubeSearchAPI },
+    } = this.context;
     try {
       const queryParams = {
         q: `track:${title} ${
@@ -68,7 +71,14 @@ class SpotifySearchAPI extends RESTDataSource {
         };
       });
       const spotifyUrl = external_urls.spotify;
-      const metadata = { albumInfo, artistsInfo, spotifyUrl, name };
+      const youTubeId = await youTubeSearchAPI.getYouTubeId(title, mainArtists);
+      const metadata = {
+        albumInfo,
+        artistsInfo,
+        spotifyUrl,
+        name,
+        youTubeId,
+      };
 
       return metadata;
     } catch (error) {

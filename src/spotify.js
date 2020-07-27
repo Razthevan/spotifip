@@ -4,6 +4,8 @@ const { buildFederatedSchema } = require("@apollo/federation");
 const SpotifySearchAPI = require("./spotify/dataSources/spotifySearchDatasource");
 const SpotifyAuthenticationAPI = require("./spotify/dataSources/spotifyAuthenticationDatasource");
 
+const YouTubeSearchApi = require("./spotify/dataSources/youtubeSearchDataSource");
+
 const port = 4001;
 const SPOTIFY_ACCESS_TOKEN = "spotify_access_token";
 
@@ -19,6 +21,7 @@ const typeDefs = gql`
     spotifyUrl: String!
     artistsInfo: [ArtistInfo]
     albumInfo: AlbumInfo
+    youTubeId: String
   }
   type ArtistInfo {
     name: String
@@ -56,6 +59,7 @@ const server = new ApolloServer({
     return {
       spotifySearchAPI: new SpotifySearchAPI(),
       spotifyAuthenticationAPI: new SpotifyAuthenticationAPI(),
+      youTubeSearchAPI: new YouTubeSearchApi(),
     };
   },
   context: ({ req }) => {
