@@ -17,8 +17,8 @@ const typeDefs = gql`
     metadata: Metadata @requires(fields: "title albumTitle mainArtists")
   }
   type Metadata {
-    name: String!
-    spotifyUrl: String!
+    name: String
+    spotifyUrl: String
     artistsInfo: [ArtistInfo]
     albumInfo: AlbumInfo
     youTubeId: String

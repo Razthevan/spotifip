@@ -55,7 +55,10 @@ class SpotifySearchAPI extends RESTDataSource {
       const youTubeId = await youTubeSearchAPI.getYouTubeId(title, mainArtists);
 
       if (!total) {
-        return { youTubeId };
+        if (youTubeId) {
+          return { youTubeId };
+        }
+        return null;
       }
 
       const trackInfo = items[0];
