@@ -52,9 +52,10 @@ class SpotifySearchAPI extends RESTDataSource {
       const {
         tracks: { items, total },
       } = result;
+      const youTubeId = await youTubeSearchAPI.getYouTubeId(title, mainArtists);
 
       if (!total) {
-        return null;
+        return { youTubeId };
       }
 
       const trackInfo = items[0];
@@ -71,7 +72,6 @@ class SpotifySearchAPI extends RESTDataSource {
         };
       });
       const spotifyUrl = external_urls.spotify;
-      const youTubeId = await youTubeSearchAPI.getYouTubeId(title, mainArtists);
       const metadata = {
         albumInfo,
         artistsInfo,

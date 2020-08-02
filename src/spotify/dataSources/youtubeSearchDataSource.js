@@ -16,9 +16,7 @@ class YouTubeSearchApi extends RESTDataSource {
   async getYouTubeId(title, mainArtists) {
     try {
       const queryParams = {
-        q: `track:${title} ${
-          mainArtists.length ? `artist:${mainArtists[0]}` : ""
-        }`,
+        q: `${title} ${mainArtists.length ? `${mainArtists[0]}` : ""}`,
         type: "video",
         key: process.env.YOUTUBE_API_KEY,
         part: "snippet",
