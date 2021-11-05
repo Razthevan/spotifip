@@ -80,6 +80,7 @@ const server = new ApolloServer({
         "http://localhost:3000",
         "http://localhost:4000",
         "https://eclectic.now.sh",
+        "https://eclectic.vercel.app",
       ];
 
       if (whitelist.indexOf(origin) !== -1) {
