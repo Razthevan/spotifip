@@ -54,10 +54,7 @@ const gateway = new ApolloGateway({
 const server = new ApolloServer({
   gateway,
   subscriptions: false,
-  cors: {
-    origin: whitelist,
-    credentials: true,
-  },
+  cors: false,
   context: ({ req }) => {
     const { headers } = req;
     let spotify_access_token = null;
