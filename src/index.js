@@ -84,7 +84,7 @@ const server = new ApolloServer({
         "https://eclectic.vercel.app/"
       ];
 
-      if (whitelist.indexOf(origin) !== -1) {
+      if (whitelist.indexOf(origin) !== -1 || !origin) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
