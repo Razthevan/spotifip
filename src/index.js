@@ -8,6 +8,12 @@ const { ApolloGateway, RemoteGraphQLDataSource } = require("@apollo/gateway");
 
 const port = 4000;
 const SPOTIFY_ACCESS_TOKEN = "spotify_access_token";
+      const whitelist = [
+        "http://localhost:3000",
+        "http://localhost:4000",
+        "https://eclectic.now.sh",
+        "https://eclectic.vercel.app",
+      ];
 
 class DataSourceWithHeadersHandling extends RemoteGraphQLDataSource {
   willSendRequest({ request, context }) {
@@ -48,9 +54,12 @@ const gateway = new ApolloGateway({
 const server = new ApolloServer({
   gateway,
   subscriptions: false,
+  cors: {
+    origin: whitelist,
+    credentials: true,
+  },
   context: ({ req }) => {
     const { headers } = req;
-
     let spotify_access_token = null;
     return { headers, spotify_access_token };
   },
@@ -63,7 +72,7 @@ const server = new ApolloServer({
               const spotifyCookie = cookie.serialize(
                 SPOTIFY_ACCESS_TOKEN,
                 context[SPOTIFY_ACCESS_TOKEN],
-                { maxAge: 3600 }
+                { maxAge: 3600 },
               );
 
               response.http.headers.set("Set-Cookie", spotifyCookie);
@@ -76,12 +85,12 @@ const server = new ApolloServer({
   // cors: {
   //   credentials: true,
   //   origin: (origin, callback) => {
-  //     const whitelist = [
-  //       "http://localhost:3000",
-  //       "http://localhost:4000",
-  //       "https://eclectic.now.sh",
-  //       "https://eclectic.vercel.app",
-  //     ];
+  // const whitelist = [
+  //   "http://localhost:3000",
+  //   "http://localhost:4000",
+  //   "https://eclectic.now.sh",
+  //   "https://eclectic.vercel.app",
+  // ];
 
   //     if (whitelist.indexOf(origin) !== -1 || !origin) {
   //       callback(null, true);
@@ -92,6 +101,7 @@ const server = new ApolloServer({
   // },
 });
 
+server.use()
 server.listen({ port: process.env.PORT || port }).then(({ url }) => {
   console.log(`SpotiFip service ready at ${url}`);
 });
