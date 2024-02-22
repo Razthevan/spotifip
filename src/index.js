@@ -73,24 +73,23 @@ const server = new ApolloServer({
       },
     },
   ],
-  cors: {
-    credentials: true,
-    origin: (origin, callback) => {
-      const whitelist = [
-        "http://localhost:3000",
-        "http://localhost:4000",
-        "https://eclectic.now.sh",
-        "https://eclectic.vercel.app",
-        "https://eclectic.vercel.app/"
-      ];
+  // cors: {
+  //   credentials: true,
+  //   origin: (origin, callback) => {
+  //     const whitelist = [
+  //       "http://localhost:3000",
+  //       "http://localhost:4000",
+  //       "https://eclectic.now.sh",
+  //       "https://eclectic.vercel.app",
+  //     ];
 
-      if (whitelist.indexOf(origin) !== -1 || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-  },
+  //     if (whitelist.indexOf(origin) !== -1 || !origin) {
+  //       callback(null, true);
+  //     } else {
+  //       callback(new Error("Not allowed by CORS"));
+  //     }
+  //   },
+  // },
 });
 
 server.listen({ port: process.env.PORT || port }).then(({ url }) => {
