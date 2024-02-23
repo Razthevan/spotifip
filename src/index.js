@@ -8,7 +8,7 @@ const { ApolloGateway, RemoteGraphQLDataSource } = require("@apollo/gateway");
 
 const port = 4000;
 const SPOTIFY_ACCESS_TOKEN = "spotify_access_token";
-const allowedOrigins = [
+const whitelist = [
   "http://localhost:3000",
   "http://localhost:4000",
   "https://eclectic.now.sh",
@@ -53,7 +53,6 @@ const gateway = new ApolloGateway({
 const server = new ApolloServer({
   gateway,
   subscriptions: false,
-  cors: false,
   context: ({ req }) => {
     const { headers } = req;
     let spotify_access_token = null;
@@ -78,27 +77,19 @@ const server = new ApolloServer({
       },
     },
   ],
-  async applyMiddleware({ app }) {
-    app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-      res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-      res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-      res.setHeader(
-        "Access-Control-Allow-Headers",
-        "Content-Type, Authorization",
-      );
-      if (req.method === "OPTIONS") {
-        res.sendStatus(200);
+  cors: {
+    credentials: true,
+    origin: (origin, callback) => {
+      if (whitelist.includes(origin)) {
+        callback(null, true);
       } else {
-        next();
+        callback(new Error("Not allowed by CORS"));
       }
-    });
+    },
+    methods: "GET,POST,OPTIONS",
   },
 });
 
-server.use();
 server.listen({ port: process.env.PORT || port }).then(({ url }) => {
   console.log(`SpotiFip service ready at ${url}`);
 });
