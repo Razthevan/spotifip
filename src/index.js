@@ -8,12 +8,12 @@ const { ApolloGateway, RemoteGraphQLDataSource } = require("@apollo/gateway");
 
 const port = 4000;
 const SPOTIFY_ACCESS_TOKEN = "spotify_access_token";
-      const whitelist = [
-        "http://localhost:3000",
-        "http://localhost:4000",
-        "https://eclectic.now.sh",
-        "https://eclectic.vercel.app",
-      ];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:4000",
+  "https://eclectic.now.sh",
+  "https://eclectic.vercel.app",
+];
 
 class DataSourceWithHeadersHandling extends RemoteGraphQLDataSource {
   willSendRequest({ request, context }) {
@@ -24,15 +24,14 @@ class DataSourceWithHeadersHandling extends RemoteGraphQLDataSource {
       if (parsedSpotifyCookie) {
         request.http.headers.set(
           SPOTIFY_ACCESS_TOKEN,
-          parsedSpotifyCookie[SPOTIFY_ACCESS_TOKEN]
+          parsedSpotifyCookie[SPOTIFY_ACCESS_TOKEN],
         );
       }
     }
   }
   didReceiveResponse({ response, _, context }) {
-    const spotify_access_token = response.http.headers.get(
-      SPOTIFY_ACCESS_TOKEN
-    );
+    const spotify_access_token =
+      response.http.headers.get(SPOTIFY_ACCESS_TOKEN);
 
     if (spotify_access_token) {
       context.spotify_access_token = spotify_access_token;
@@ -79,26 +78,27 @@ const server = new ApolloServer({
       },
     },
   ],
-  // cors: {
-  //   credentials: true,
-  //   origin: (origin, callback) => {
-  // const whitelist = [
-  //   "http://localhost:3000",
-  //   "http://localhost:4000",
-  //   "https://eclectic.now.sh",
-  //   "https://eclectic.vercel.app",
-  // ];
-
-  //     if (whitelist.indexOf(origin) !== -1 || !origin) {
-  //       callback(null, true);
-  //     } else {
-  //       callback(new Error("Not allowed by CORS"));
-  //     }
-  //   },
-  // },
+  async applyMiddleware({ app }) {
+    app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+      res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+      res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization",
+      );
+      if (req.method === "OPTIONS") {
+        res.sendStatus(200);
+      } else {
+        next();
+      }
+    });
+  },
 });
 
-server.use()
+server.use();
 server.listen({ port: process.env.PORT || port }).then(({ url }) => {
   console.log(`SpotiFip service ready at ${url}`);
 });
