@@ -79,20 +79,19 @@ const server = new ApolloServer({
   ],
   cors: {
     credentials: true,
-    origin:whitelist,
+    origin: (origin, callback) => {
+      if (whitelist.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: "GET,POST,OPTIONS",
+    preflightContinue: false, 
+    optionsSuccessStatus: 204, 
   },
 });
 
 server.listen({ port: process.env.PORT || port }).then(({ url }) => {
   console.log(`SpotiFip service ready at ${url}`);
 });
-
-
-    // origin: (origin, callback) => {
-    //   if (whitelist.includes(origin)) {
-    //     callback(null, true);
-    //   } else {
-    //     callback(new Error("Not allowed by CORS"));
-    //   }
-    // },
